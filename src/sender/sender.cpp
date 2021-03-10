@@ -1,4 +1,4 @@
-#include <sender/module.h>
+#include <sender/sender.h>
 
 sender::sender(uint8_t buttonPin,
                uint8_t canCsPin,
