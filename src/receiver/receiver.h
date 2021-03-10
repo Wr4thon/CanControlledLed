@@ -1,10 +1,12 @@
 #pragma once
 
+#define RECEIVER
+
 #include <Arduino.h>
 #include <SPI.h>
 #include "mcp_can.h"
 
-class sender
+class receiver
 {
 private:
   // pin the button is connected to.
@@ -12,28 +14,27 @@ private:
   // CS pin of mcp2515
   uint8_t canCsPin;
 
-  // time before checking the state of the button again after a change.
-  unsigned long debounceTime;
-
   MCP_CAN *can; // The can bus.
 
   unsigned long lastStateChange;
   int lastState = LOW;
   byte ledTransmitState;
 
-public:
-  sender() : sender(9, 10, 100) {}
-  sender(uint8_t buttonPin, uint8_t canCsPin, unsigned long debounceTime);
+  unsigned char canInterruptFlag;
 
-  ~sender();
+public:
+  receiver() : receiver(9, 10) {}
+  receiver(uint8_t ledPin, uint8_t canCsPin);
+
+  ~receiver();
 
   /**
-   * setup contains the setup logic for the sender module.
+   * setup contains the setup logic for the receiver module.
   */
   void setup();
 
   /**
-   * loop contains the loop logic for the sender module.
+   * loop contains the loop logic for the receiver module.
   */
   void loop();
 
@@ -44,4 +45,6 @@ public:
    * We can not use it anyways with an uninitialized can bus.
   */
   void initializeCAN();
+
+  void setCanInterruptFlag(byte value);
 };

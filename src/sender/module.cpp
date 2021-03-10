@@ -1,17 +1,15 @@
 #include <sender/module.h>
 
-module::module(uint8_t buttonPin,
+sender::sender(uint8_t buttonPin,
                uint8_t canCsPin,
-               unsigned long serialStartupTimeout,
                unsigned long debounceTime)
 {
-  this->buttonPin = buttonPin;
+  this->ledPin = buttonPin;
   this->canCsPin = canCsPin;
-  this->serialStartupTimeout = serialStartupTimeout;
   this->debounceTime = debounceTime;
 }
 
-void module::initializeCAN()
+void sender::initializeCAN()
 {
   // initialize the CAN bus with
   can = new MCP_CAN(canCsPin);
@@ -30,18 +28,14 @@ void module::initializeCAN()
   Serial.println();
 }
 
-void module::setup()
+void sender::setup()
 {
-  Serial.begin(9600);
-  while (!Serial && serialStartupTimeout > millis())
-    ;
-
   initializeCAN();
 
-  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, INPUT_PULLUP);
 }
 
-void module::loop()
+void sender::loop()
 {
   if ((millis() - lastStateChange) < debounceTime)
   {
@@ -51,7 +45,7 @@ void module::loop()
     return;
   }
 
-  int currentState = digitalRead(buttonPin);
+  int currentState = digitalRead(ledPin);
   if (currentState == lastState)
   {
     // State did not change, nothing to do.
@@ -77,7 +71,7 @@ void module::loop()
   can->sendMsgBuf(2, 0, 1, buf);
 }
 
-module::~module()
+sender::~sender()
 {
   can = NULL;
 }
