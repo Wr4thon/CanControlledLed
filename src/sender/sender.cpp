@@ -7,6 +7,7 @@ sender::sender(uint8_t buttonPin,
   this->ledPin = buttonPin;
   this->canCsPin = canCsPin;
   this->debounceTime = debounceTime;
+  this->ledTransmitState = false;
 }
 
 void sender::initializeCAN()
@@ -26,6 +27,13 @@ void sender::initializeCAN()
   Serial.print((millis() - start));
   Serial.println("ms");
   Serial.println();
+
+  // when initializing both controllers at the same time, 
+  // this message might not reach its destination.
+  // So we wait for half a second before sending.
+  delay(500);
+
+  sendState(false);
 }
 
 void sender::setup()
@@ -66,8 +74,13 @@ void sender::loop()
   Serial.print("button pressed; sending: ");
   Serial.println(ledTransmitState);
 
+  sendState(ledTransmitState);
+}
+
+void sender::sendState(bool state)
+{
   // Set the new ledTransmitState in the buffer and send the message.
-  byte buf[1] = {ledTransmitState};
+  byte buf[1] = {state};
   can->sendMsgBuf(2, 0, 1, buf);
 }
 

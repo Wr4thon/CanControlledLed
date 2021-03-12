@@ -20,7 +20,7 @@ private:
   int lastState = LOW;
   byte ledTransmitState;
 
-  unsigned char canInterruptFlag;
+  volatile unsigned char canInterruptFlag;
 
 public:
   receiver() : receiver(9, 10) {}

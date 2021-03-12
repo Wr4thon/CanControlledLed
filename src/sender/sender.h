@@ -21,6 +21,8 @@ private:
   int lastState = LOW;
   byte ledTransmitState;
 
+  void sender::sendState(bool state);
+
 public:
   sender() : sender(9, 10, 100) {}
   sender(uint8_t buttonPin, uint8_t canCsPin, unsigned long debounceTime);
