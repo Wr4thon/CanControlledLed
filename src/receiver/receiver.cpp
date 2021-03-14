@@ -4,12 +4,11 @@ receiver::receiver(uint8_t ledPin, uint8_t canCsPin)
 {
   this->ledPin = ledPin;
   this->canCsPin = canCsPin;
-  this->canInterruptFlag = 0;
+  resetInterruptFlag();
 }
 
 void receiver::initializeCAN()
 {
-  // initialize the CAN bus with
   can = new MCP_CAN(canCsPin);
   unsigned long start = millis();
   Serial.print("Begin can ");
@@ -41,7 +40,7 @@ void receiver::loop()
   }
 
   Serial.print("received: ");
-  canInterruptFlag = 0;
+  resetInterruptFlag();
 
   byte len = 0;
   byte buf[8];
@@ -68,7 +67,12 @@ receiver::~receiver()
   can = NULL;
 }
 
-void receiver::setCanInterruptFlag(byte value)
+void receiver::setMessageAvailable()
 {
-  this->canInterruptFlag = value;
+  this->canInterruptFlag = true;
+}
+
+void receiver::resetInterruptFlag()
+{
+  canInterruptFlag = false;
 }

@@ -9,23 +9,44 @@
 class receiver
 {
 private:
-  // pin the button is connected to.
+  // Pin the LED is connected to.
   uint8_t ledPin;
-  // CS pin of mcp2515
+  // CS pin of MCP2515
   uint8_t canCsPin;
 
-  MCP_CAN *can; // The can bus.
+  // reference to the CAN object
+  MCP_CAN *can; 
 
   unsigned long lastStateChange;
   int lastState = LOW;
   byte ledTransmitState;
 
-  volatile unsigned char canInterruptFlag;
+  /**
+   * when set to true the loop attempts to read a message from the CAN module
+  */
+  volatile bool canInterruptFlag;
+
+  /**
+   * resetInterruptFlag resets the canInterruptFlag.
+  */
+  void resetInterruptFlag();
 
 public:
+  /**
+   * default ctor
+  */
   receiver() : receiver(9, 10) {}
+
+  /**
+   * ctor
+   * @param ledPin a pin to which an LED is connected.
+   * @param canCsPin the chip select pin for the MCP2515.
+  */
   receiver(uint8_t ledPin, uint8_t canCsPin);
 
+  /**
+   * destructor
+  */
   ~receiver();
 
   /**
@@ -46,5 +67,9 @@ public:
   */
   void initializeCAN();
 
-  void setCanInterruptFlag(byte value);
+  /**
+   * setMessageAvailable tells the class that new data is 
+   * available for reading from the module.
+  */
+  void setMessageAvailable();
 };
